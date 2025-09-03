@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>🪨Rock and Fish🐟 Q&A</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #745100, #000000);
+      margin: 0; padding: 0;
+      text-align: center;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+    h1 {
+      margin-top: 20px;
+      animation: fadeInDown 1s ease;
+    }
+    button {
+      background: #ff0000;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    button:hover:not(:disabled) {
+      background: #ff567d;
+      transform: scale(1.05);
+    }
+    input, select {
+      padding: 8px; margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      transition: border 0.3s ease;
+    }
+    input:focus, select:focus {
+      border-color: #ff567d;
+      box-shadow: 0 0 5px rgba(255,86,125,0.6);
+    }
+    .question-block {
+      background: white;
+      padding: 15px;
+      margin: 10px auto;
+      border-radius: 8px;
+      max-width: 500px;
+      color: black;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 0.5s ease;
+    }
+    .question-block:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+    .option-input { display: block; margin: 5px 0; }
+    .hidden { display: none; }
+    .timer {
+      font-weight: bold;
+      color: #ff4b5c;
+      animation: fadeIn 0.5s ease;
+    }
+    .timer.low-time {
+      animation: pulse 1s infinite;
+    }
+    .error { border: 1px solid red; }
+
+    /* Animations */
+    @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+    @keyframes fadeInDown { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+    @keyframes fadeInUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .section {
+      animation: fadeIn 0.6s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>🪨Rock and Fish🐟 Q&A Game</h1>
+
+  <div id="auth-section" class="section">
+    <h3>Join or Create Game</h3>
+    <input id="playerName" placeholder="Your Name" aria-label="Player Name">
+    <input id="roomCode" placeholder="Room Code" aria-label="Room Code">
+    <button onclick="createRoom()">Create Room</button>
+    <button onclick="joinRoom()">Join Room</button>
+  </div>
+
+  <div id="question-section" class="section hidden">
+    <h3>Add Your Questions</h3>
+    <div id="questions-container"></div>
+    <button onclick="addQuestion()">+ Add Question</button>
+    <br>
+    <button onclick="submitQuestions()">Submit Questions</button>
+    <div id="review-timer" class="hidden">⏳ Review Time Left: <span id="timer" class="timer"></span></div>
+  </div>
+
+  <div id="answer-section" class="section hidden">
+    <h3>Answer Your Friend's Questions</h3>
+    <div id="answer-container"></div>
+    <button onclick="submitAnswers()">Submit Answers</button>
+  </div>
+
+  <div id="result-section" class="section hidden">
+    <h3>Results</h3>
+    <div id="result-output"></div>
+    <button onclick="location.reload()">Play Again</button>
+  </div>
+
+  <script>
+    let playerName, roomCode, reviewEndTime;
+
+    function createRoom() {
+      playerName = document.getElementById('playerName').value.trim();
+      if (!playerName) return alert("Enter your name");
+      roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      alert(`Room created: ${roomCode}`);
+      enterQuestionMode();
+    }
+
+    function joinRoom() {
+      playerName = document.getElementById('playerName').value.trim();
+      roomCode = document.getElementById('roomCode').value.trim().toUpperCase();
+      if (!playerName || !roomCode) return alert("Enter both name and room code");
+      alert("Joined room: " + roomCode);
+      enterQuestionMode();
+    }
+
+    function enterQuestionMode() {
+      document.getElementById('auth-section').classList.add('hidden');
+      document.getElementById('question-section').classList.remove('hidden');
+      addQuestion();
+    }
+
+    function addQuestion() {
+      const container = document.getElementById('questions-container');
+      const div = document.createElement('div');
+      div.className = 'question-block';
+      div.innerHTML = `
+        <input placeholder="Question" aria-label="Question">
+        <input placeholder="Option 1" class="option-input" aria-label="Option 1">
+        <input placeholder="Option 2" class="option-input" aria-label="Option 2">
+        <input placeholder="Option 3" class="option-input" aria-label="Option 3">
+        <input placeholder="Option 4" class="option-input" aria-label="Option 4">
+        <select aria-label="Correct Answer">
+          <option value="">Select Correct Answer</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+          <option value="4">Option 4</option>
+        </select>
+      `;
+      container.appendChild(div);
+    }
+
+    function submitQuestions() {
+      const blocks = document.querySelectorAll('.question-block');
+      let questions = [];
+      blocks.forEach(b => {
+        const q = b.querySelector('input').value.trim();
+        const opts = Array.from(b.querySelectorAll('.option-input')).map(o => o.value.trim());
+        const correct = b.querySelector('select').value;
+        if (q && opts.every(o => o) && correct) {
+          questions.push({ question: q, options: opts, correct });
+        }
+      });
+      if (questions.length === 0) return alert("Add at least one valid question");
+      reviewEndTime = Date.now() + (3 * 60 * 1000);
+      startReviewTimer();
+    }
+
+    function startReviewTimer() {
+      document.getElementById('review-timer').classList.remove('hidden');
+      const timerEl = document.getElementById('timer');
+      const interval = setInterval(() => {
+        let diff = reviewEndTime - Date.now();
+        if (diff <= 0) {
+          clearInterval(interval);
+          document.getElementById('review-timer').innerText = "Review ended!";
+          startAnswering();
+        } else {
+          let m = Math.floor(diff / 60000);
+          let s = Math.floor((diff % 60000) / 1000);
+          timerEl.innerText = `${m}:${s < 10 ? '0' + s : s}`;
+          if (diff < 30000) timerEl.classList.add('low-time');
+        }
+      }, 1000);
+    }
+
+    function startAnswering() {
+      document.getElementById('question-section').classList.add('hidden');
+      document.getElementById('answer-section').classList.remove('hidden');
+      const dummyQuestions = [
+        { question: "What's my favorite color?", options: ["Red", "Blue", "Green", "Yellow"], correct: "2" }
+      ];
+      showQuestionsToAnswer(dummyQuestions);
+    }
+
+    function showQuestionsToAnswer(qs) {
+      const container = document.getElementById('answer-container');
+      container.innerHTML = '';
+      qs.forEach((q, i) => {
+        let div = document.createElement('div');
+        div.className = 'question-block';
+        div.innerHTML = `<p>${i+1}. ${q.question}</p>` +
+          q.options.map((o, idx) =>
+            `<label><input type="radio" name="q${i}" value="${idx+1}"> ${o}</label><br>`
+          ).join('');
+        container.appendChild(div);
+      });
+    }
+
+    function submitAnswers() {
+      const blocks = document.querySelectorAll('#answer-container .question-block');
+      let answers = [];
+      let hasError = false;
+      blocks.forEach((b, i) => {
+        const selected = b.querySelector('input[type=radio]:checked');
+        if (!selected) hasError = true;
+        answers.push(selected ? selected.value : null);
+      });
+      if (hasError) return alert("Please answer all questions");
+      const dummyQuestions = [
+        { question: "What's my favorite color?", options: ["Red", "Blue", "Green", "Yellow"], correct: "2" }
+      ];
+      calculateResults(answers, dummyQuestions);
+    }
+
+    function calculateResults(answers, qs) {
+      let correctCount = 0;
+      let breakdown = '';
+      qs.forEach((q, i) => {
+        let isCorrect = answers[i] == q.correct;
+        if (isCorrect) correctCount++;
+        breakdown += `<p>${i+1}. ${q.question} <br>
+          Your answer: ${q.options[answers[i]-1] || 'No answer'} ${isCorrect ? '✅' : '❌'}<br>
+          Correct: ${q.options[q.correct-1]}</p>`;
+      });
+      let percent = Math.round((correctCount / qs.length) * 100);
+      let tag = getLevelTag(percent);
+      document.getElementById('result-section').classList.remove('hidden');
+      document.getElementById('answer-section').classList.add('hidden');
+      document.getElementById('result-output').innerHTML =
+        `<h4>${playerName || 'You'}, you scored ${percent}% - ${tag}</h4>${breakdown}`;
+    }
+
+    function getLevelTag(p) {
+      if (p >= 90) return "💖 Soulmate Energy";
+      if (p >= 75) return "😊 Close Confidant";
+      if (p >= 50) return "🤝 Friendly Guesswork";
+      return "😅 We Need to Talk...";
+    }
+  </script>
+</body>
+</html>
