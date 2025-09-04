@@ -4,86 +4,293 @@
   <meta charset="UTF-8">
   <title>🪨Rock and Fish🐟 Q&A</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Montserrat font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      /* Shared variables */
+      --font-main: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #745100, #000000);
+      font-family: var(--font-main);
       margin: 0; padding: 0;
       text-align: center;
-      color: #ffffff;
       overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
     }
-    h1 {
-      margin-top: 20px;
-      animation: fadeInDown 1s ease;
+
+    /* --- LIGHT THEME --- */
+    .light-theme {
+      background: linear-gradient(120deg, #ffd6e1 0%, #c9f6f9 100%);
+      color: #222;
+      font-family: var(--font-main);
     }
-    button {
-      background: #ff0000;
-      color: white;
-      padding: 10px 20px;
+    .light-theme h1 {
+      font-size: 2.7em;
+      font-weight: 700;
+      color: #232323;
+      margin-top: 32px;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+      line-height: 1.15;
+      font-family: var(--font-main);
+    }
+    .light-theme h3 {
+      font-size: 1.35em;
+      font-weight: 600;
+      color: #232323;
+      margin-bottom: 24px;
+      margin-top: 0;
+      font-family: var(--font-main);
+    }
+    .light-theme input, .light-theme select {
+      font-family: var(--font-main);
+      font-size: 1.1em;
+      border-radius: 8px;
+      border: 1.5px solid #d8e0e6;
+      padding: 10px 18px;
+      background: #f5f8fa;
+      color: #232323;
+      margin: 0 6px 10px 0;
+      outline: none;
+      transition: border 0.3s;
+      box-sizing: border-box;
+    }
+    .light-theme input:focus, .light-theme select:focus {
+      border-color: #ff80a8;
+      box-shadow: 0 0 7px #ffb7d1bb;
+    }
+    .light-theme button {
+      font-family: var(--font-main);
+      font-size: 1.1em;
+      border-radius: 8px;
+      background: #ff80a8;
+      color: #fff;
+      font-weight: 600;
       border: none;
-      border-radius: 5px;
-      margin: 5px;
+      padding: 10px 22px;
+      margin: 8px 6px 0 0;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background 0.3s, transform 0.3s;
+      box-shadow: 0 2px 8px #ffb7d155;
+      letter-spacing: 0.4px;
     }
-    button:disabled { background: #ccc; cursor: not-allowed; }
-    button:hover:not(:disabled) {
-      background: #ff567d;
+    .light-theme button:hover:not(:disabled) {
+      background: #ff5a91;
       transform: scale(1.05);
     }
-    input, select {
-      padding: 8px; margin: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      outline: none;
-      transition: border 0.3s ease;
+    .light-theme button:disabled {
+      background: #eee;
+      color: #aaa;
+      cursor: not-allowed;
     }
-    input:focus, select:focus {
-      border-color: #ff567d;
-      box-shadow: 0 0 5px rgba(255,86,125,0.6);
+    .light-theme .question-block {
+      background: #fff;
+      color: #232323;
+      font-family: var(--font-main);
+      box-shadow: 0 4px 16px 0 #e6f4f8bb;
+      border-radius: 10px;
+      padding: 18px 16px;
+      margin: 18px auto;
+      max-width: 500px;
+      text-align: left;
+    }
+    .light-theme .option-input {
+      margin-bottom: 6px;
+    }
+    .light-theme .timer {
+      color: #ff5a91;
+      font-weight: 700;
+      font-family: var(--font-main);
+    }
+    .light-theme .timer.low-time {
+      color: #ff80a8;
+    }
+    .light-theme .theme-switch {
+      color: #ff80a8;
+      background: none;
+      font-size: 1.7em;
+      border-radius: 50%;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 0;
+      position: absolute;
+      top: 18px;
+      right: 20px;
+    }
+    .light-theme .theme-switch:hover {
+      background: #ffe0ec;
+    }
+
+    /* --- DARK THEME --- */
+    .dark-theme {
+      background: linear-gradient(135deg, #745100 0%, #000000 100%);
+      color: #fff;
+      font-family: var(--font-main);
+    }
+    .dark-theme h1 {
+      font-size: 2.4em;
+      font-weight: 700;
+      color: #ffd26b;
+      letter-spacing: 0.5px;
+      font-family: var(--font-main);
+      margin-top: 32px;
+      margin-bottom: 10px;
+      line-height: 1.15;
+    }
+    .dark-theme h3 {
+      font-size: 1.25em;
+      font-weight: 600;
+      color: #ffe9b3;
+      margin-bottom: 24px;
+      margin-top: 0;
+      font-family: var(--font-main);
+    }
+    .dark-theme input, .dark-theme select {
+      font-family: var(--font-main);
+      font-size: 1.1em;
+      border-radius: 8px;
+      border: 1.5px solid #444;
+      padding: 10px 18px;
+      background: #222;
+      color: #fff;
+      margin: 0 6px 10px 0;
+      outline: none;
+      transition: border 0.3s;
+      box-sizing: border-box;
+    }
+    .dark-theme input:focus, .dark-theme select:focus {
+      border-color: #ffd26b;
+      box-shadow: 0 0 7px #ffd26bbb;
+    }
+    .dark-theme button {
+      font-family: var(--font-main);
+      font-size: 1.1em;
+      border-radius: 8px;
+      background: #ff567d;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      padding: 10px 22px;
+      margin: 8px 6px 0 0;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      box-shadow: 0 2px 8px #ffd26b55;
+      letter-spacing: 0.4px;
+    }
+    .dark-theme button:hover:not(:disabled) {
+      background: #ffd26b;
+      color: #432200;
+      transform: scale(1.05);
+    }
+    .dark-theme button:disabled {
+      background: #444;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+    .dark-theme .question-block {
+      background: #222;
+      color: #ffe9b3;
+      font-family: var(--font-main);
+      box-shadow: 0 4px 16px 0 #000000bb;
+      border-radius: 10px;
+      padding: 18px 16px;
+      margin: 18px auto;
+      max-width: 500px;
+      text-align: left;
+    }
+    .dark-theme .option-input {
+      margin-bottom: 6px;
+    }
+    .dark-theme .timer {
+      color: #ffd26b;
+      font-weight: 700;
+      font-family: var(--font-main);
+    }
+    .dark-theme .timer.low-time {
+      color: #ff567d;
+    }
+    .dark-theme .theme-switch {
+      color: #ffd26b;
+      background: none;
+      font-size: 1.7em;
+      border-radius: 50%;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 0;
+      position: absolute;
+      top: 18px;
+      right: 20px;
+    }
+    .dark-theme .theme-switch:hover {
+      background: #432200;
+    }
+
+    /* Shared styles */
+    .section {
+      animation: fadeIn 0.6s ease;
     }
     .question-block {
-      background: white;
-      padding: 15px;
-      margin: 10px auto;
-      border-radius: 8px;
-      max-width: 500px;
-      color: black;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s, box-shadow 0.3s;
       animation: fadeInUp 0.5s ease;
     }
     .question-block:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.13);
     }
-    .option-input { display: block; margin: 5px 0; }
+    .option-input { display: block; }
     .hidden { display: none; }
     .timer {
       font-weight: bold;
-      color: #ff4b5c;
       animation: fadeIn 0.5s ease;
     }
     .timer.low-time {
       animation: pulse 1s infinite;
     }
     .error { border: 1px solid red; }
-
-    /* Animations */
     @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     @keyframes fadeInDown { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
     @keyframes fadeInUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
     @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      0%, 100% { transform: scale(1);}
+      50% { transform: scale(1.1);}
     }
-    .section {
-      animation: fadeIn 0.6s ease;
+
+    /* Responsive: Center form fields for main screen */
+    @media (max-width: 600px) {
+      .light-theme h1, .dark-theme h1 { font-size: 2em; }
+      .light-theme h3, .dark-theme h3 { font-size: 1.1em; }
+      .question-block { max-width: 98vw; padding: 11px 4vw; }
+      .theme-switch { top: 8px; right: 8px; }
     }
   </style>
+  <!-- Firebase SDKs: App and Database (Compat for window.firebase) -->
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-database-compat.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvaDuz1OCKYuDfieZiHynhYkur9KOPY00",
+      authDomain: "birdview-025802.firebaseapp.com",
+      projectId: "birdview-025802",
+      storageBucket: "birdview-025802.firebasestorage.app",
+      messagingSenderId: "607338097846",
+      appId: "1:607338097846:web:2ac36ce8f1261664180a17",
+      measurementId: "G-Z08YPG773L"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    // Create a database reference for use elsewhere
+    const db = firebase.database();
+  </script>
 </head>
-<body>
+<body class="dark-theme">
+  <button class="theme-switch" id="theme-switch" aria-label="Switch theme" title="Switch theme">🌞</button>
   <h1>🪨Rock and Fish🐟 Q&A Game</h1>
 
   <div id="auth-section" class="section">
@@ -116,12 +323,39 @@
   </div>
 
   <script>
+    // THEME SWITCHER
+    const themeSwitchBtn = document.getElementById('theme-switch');
+    const body = document.body;
+    function setTheme(theme) {
+      if (theme === 'light') {
+        body.classList.add('light-theme');
+        body.classList.remove('dark-theme');
+        themeSwitchBtn.textContent = '🌙';
+        themeSwitchBtn.title = 'Switch to dark theme';
+      } else {
+        body.classList.add('dark-theme');
+        body.classList.remove('light-theme');
+        themeSwitchBtn.textContent = '🌞';
+        themeSwitchBtn.title = 'Switch to light theme';
+      }
+    }
+    // Load theme preference
+    const savedTheme = localStorage.getItem('theme');
+    setTheme(savedTheme || 'dark');
+    themeSwitchBtn.onclick = function() {
+      const isDark = body.classList.contains('dark-theme');
+      setTheme(isDark ? 'light' : 'dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    };
+
+    // GAME CODE
     let playerName, roomCode, reviewEndTime;
 
     function createRoom() {
       playerName = document.getElementById('playerName').value.trim();
       if (!playerName) return alert("Enter your name");
       roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      document.getElementById('roomCode').value = roomCode;
       alert(`Room created: ${roomCode}`);
       enterQuestionMode();
     }
@@ -173,8 +407,12 @@
         }
       });
       if (questions.length === 0) return alert("Add at least one valid question");
-      reviewEndTime = Date.now() + (3 * 60 * 1000);
-      startReviewTimer();
+      // Save questions to Firebase under this player in the room
+      db.ref(`rooms/${roomCode}/questions/${playerName}`).set(questions)
+        .then(() => {
+          reviewEndTime = Date.now() + (1 * 60 * 1000) + (30 * 1000); // 1 min 30 sec
+          startReviewTimer();
+        });
     }
 
     function startReviewTimer() {
@@ -198,10 +436,21 @@
     function startAnswering() {
       document.getElementById('question-section').classList.add('hidden');
       document.getElementById('answer-section').classList.remove('hidden');
-      const dummyQuestions = [
-        { question: "What's my favorite color?", options: ["Red", "Blue", "Green", "Yellow"], correct: "2" }
-      ];
-      showQuestionsToAnswer(dummyQuestions);
+      // Fetch all question sets in this room except this player's
+      db.ref(`rooms/${roomCode}/questions`).once('value').then(snap => {
+        const all = snap.val();
+        if (!all) {
+          alert("Waiting for your friend to submit questions!");
+          return;
+        }
+        const otherPlayer = Object.keys(all).find(name => name !== playerName);
+        if (!otherPlayer) {
+          alert("Waiting for your friend to submit questions!");
+          return;
+        }
+        const qs = all[otherPlayer];
+        showQuestionsToAnswer(qs);
+      });
     }
 
     function showQuestionsToAnswer(qs) {
@@ -228,10 +477,13 @@
         answers.push(selected ? selected.value : null);
       });
       if (hasError) return alert("Please answer all questions");
-      const dummyQuestions = [
-        { question: "What's my favorite color?", options: ["Red", "Blue", "Green", "Yellow"], correct: "2" }
-      ];
-      calculateResults(answers, dummyQuestions);
+      // Load the questions you just answered from Firebase for result calculation
+      db.ref(`rooms/${roomCode}/questions`).once('value').then(snap => {
+        const all = snap.val();
+        const otherPlayer = Object.keys(all).find(name => name !== playerName);
+        const qs = all[otherPlayer];
+        calculateResults(answers, qs);
+      });
     }
 
     function calculateResults(answers, qs) {
@@ -261,4 +513,3 @@
   </script>
 </body>
 </html>
-
